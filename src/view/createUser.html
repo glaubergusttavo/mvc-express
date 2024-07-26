@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create User</title>
+</head>
+
+<body>
+  <h1>Create User</h1>
+  <form id="createUserForm">
+    <label> Name:</label>
+    <input type="text" id="name" required><br><br>
+    <label> Lastname:</label>
+    <input type="text" id="lastname" required><br><br>
+    <label> Age:</label>
+    <input type="number" id="age" required><br><br>
+    <button type="button" onclick="createUser()">Create User</button>
+  </form>
+  <ul id="usersList"></ul>
+  <p>------------------------------</p>
+  <h1>Create Car</h1>
+  <form id="createCarForm">
+    <label> Tipo veículo (carro, caminhão, moto): </label>
+    <input type="text" id="type" required><br><br>
+    <label> Modelo:</label>
+    <input type="text" id="model" required><br><br>
+    <label> Price:</label>
+    <input type="number" id="price" required><br><br>
+    <button type="button" onclick="createCar()">Create Car</button>
+  </form>
+  <ul id="carsList"></ul>
+  <script>
+    async function createUser() {
+      const name = document.getElementById('name').value;
+      const lastname = document.getElementById('lastname').value;
+      const age = document.getElementById('age').value;
+      const usersList = document.querySelector("#usersList")
+
+      const data = { name, lastname, age };
+
+      const response = await fetch('/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const responseUsers = await fetch('/users', {
+        method: 'GET'
+      });
+
+      const {users} = await responseUsers.json();
+      usersList.innerHTML="";
+      users.forEach(user => {
+        const newLi = document.createElement('li');
+        newLi.innerHTML = `Seu nome completo é: ${user.name} ${user.lastname} <br> Sua idade: ${user.age}<p>`;
+        usersList.appendChild(newLi);
+      });
+
+    }
+
+    async function createCar() {
+      const type = document.getElementById('type').value;
+      const model = document.getElementById('model').value;
+      const price = document.getElementById('price').value;
+      const carsList = document.getElementById('carsList')
+
+      const dataCar = { type, model, price };
+
+      const response = await fetch('/cars', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataCar)
+      });
+
+      const result = await response.json();
+      console.log(result);
+    
+      const responseJsonCar = await fetch('/cars', {
+        method: 'GET'
+      });
+      
+      const {cars} = await responseJsonCar.json();
+      carsList.innerHTML="";
+      cars.forEach(car =>{
+        const newLi = document.createElement('li')
+        newLi.innerHTML = `O tipo do veículo é: ${car.type} e o Modelo é: ${car.model} <br> Seu Preço é: ${car.price}<p>`;
+        carsList.appendChild(newLi);
+      });
+
+    }
+  </script>
+</body>
+
+</html>
